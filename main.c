@@ -48,18 +48,22 @@ char *reflect(char *orig) {
 int main() {
   int devrandom = error_check(open("/dev/urandom", O_RDONLY));
   int newfile = error_check(open("pic.ppm", O_CREAT | O_RDWR, 0644));
-  int *randarr1 = calloc(250, sizeof(int));
-  char *intro = calloc(10, sizeof(char));
+  int *randarr = calloc(250, sizeof(int));
+  char *row = calloc(250 * 3, sizeof(char));
+  char *intro = calloc(20, sizeof(char));
   sprintf(intro, "P3\n500 500\n255\n");
 
   error_check(write(newfile, intro, 10));
   free(intro);
-  error_check(read(devrandom, randarr1, 250 * sizeof(int)));
-  print_arr(randarr1, 250);
-  error_check(write(newfile, randarr1, 255 * sizeof(int)));
+  error_check(read(devrandom, randarr, 250 * sizeof(int)));
+  int i = 0;
+  for(i = 0; i < 255; i++) {
+    sprintf(row, "%s %s", row, get_color(randarr[i]));
+  }
+  error_check(write(newfile, randarr, 255 * sizeof(int)));
   //my_write(newfile, randarr1, 125 * sizeof(int));
 
-  free(randarr1);
+  free(randarr);
   close(devrandom);
   close(newfile);
   return 0;
