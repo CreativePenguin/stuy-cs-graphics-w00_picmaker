@@ -9,9 +9,9 @@ main = do
   putStrLn("255")
   putStrLn(contents)
 
-getColor :: String a => a -> String
+getColor :: String -> String
 getColor randNum = ans --where--
   where ans = r ++ " " ++ g ++ " " ++ b
-        r = read randNum % 255
-        g = read randNum / 1000 % 255
-        b = read randNum / 1000000 % 255
+        r = toString (read randNum :: Int) `mod` 255
+        g = (read randNum :: Int) / 1000 `mod` 255
+        b = (read randNum :: Int) / 1000000 `mod` 255
