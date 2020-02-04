@@ -14,18 +14,28 @@ void print_arr(int *arr, int size) {
   }
 }
 
+int abs(int val) {
+  // if(val < 0) return -1 * val else return val;
+  return val < 0 ? -1 * val : val;
+}
+
 int error_check(int val) {
   if(val < 0) printf("error %d: %s\n", errno, strerror(errno));
   return val;
 }
 
 char *get_color(int val) {
+  // char *ans, *R, *G, *B;
   char *ans, R[4], G[4], B[4];
-  ans = calloc(9, sizeof(char));
-  sprintf(R, "%d", val % 255);
-  sprintf(G, "%d", val / 1000 % 255);
-  sprintf(B, "%d", val / 1000000 % 255);
-  sprintf(ans, "%s %s %s", R, G, B);
+  ans = calloc(15, sizeof(char));
+  // R = calloc(4, sizeof(char));
+  // G = calloc(4, sizeof(char));
+  // B = calloc(4, sizeof(char));
+  sprintf(R, "%d", abs(val % 255));
+  sprintf(G, "%d", abs(val / 1000 % 255));
+  sprintf(B, "%d", abs(val / 1000000 % 255));
+  sprintf(ans, "%s %s %s ", R, G, B);
+  // free(R); free(G); free(B);
   return ans;
 }
 
@@ -74,7 +84,7 @@ int main(int argc, char *argv[]) {
   int devrandom = error_check(open("/dev/urandom", O_RDONLY));
   int newfile = error_check(open("pic.ppm", O_CREAT | O_RDWR, 0644));
   int *randarr = calloc(250, sizeof(int));
-  char *row = calloc(250 * 3, sizeof(char));
+  char *row = calloc(500 * 3 + 50, sizeof(char));
   char *intro = calloc(20, sizeof(char));
   sprintf(intro, "P3\n500 500\n255\n");
 
@@ -82,7 +92,7 @@ int main(int argc, char *argv[]) {
   free(intro);
   error_check(read(devrandom, randarr, 250 * sizeof(int)));
   int i, j;
-  if (argc >= 1) {
+  if (argc > 1) {
     for(i = 0; i < 250; i++) {
       error_check(read(devrandom, randarr, 250 * sizeof(int)));
       for(j = 0; j < 250; j++)
@@ -94,6 +104,7 @@ int main(int argc, char *argv[]) {
     for (i = 0; i < 255; i++) {
       sprintf(row, "%s %s", row, get_color(randarr[i]));
     }
+    strcat(row, "\n");
     error_check(write(newfile, row, 255 * sizeof(int)));
     // my_write(newfile, randarr1, 125 * sizeof(int));
   }
