@@ -11,5 +11,10 @@ all: main.o
 main.o: main.c
 	$(CC) -c main.c
 
+haskell: main.o
+	$(CC) -o prog.out main.o
+	stack ghc Main.hs
+	./prog.out haskell | ./main > pic.ppm
+
 clean:
-	rm *.o *.out
+	rm *.o *.out *.ppm

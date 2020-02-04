@@ -59,7 +59,18 @@ char *y_reflect(char *row) {
   return ans;
 }
 
-int main() {
+char *x_reflect(char *pic) {
+  /* char copy[strlen(pic)]; */
+  /* strcpy(copy, pic); */
+  char *copy, *row;
+  copy = strdup(pic);
+  while((row = strsep(&copy, "\n")) != NULL) {
+    sprintf(pic, "%s\n%s", row, copy);
+  }
+  return pic;
+}
+
+int main(int argc, char *argv[]) {
   int devrandom = error_check(open("/dev/urandom", O_RDONLY));
   int newfile = error_check(open("pic.ppm", O_CREAT | O_RDWR, 0644));
   int *randarr = calloc(250, sizeof(int));
@@ -70,13 +81,22 @@ int main() {
   error_check(write(newfile, intro, strlen(intro)));
   free(intro);
   error_check(read(devrandom, randarr, 250 * sizeof(int)));
-  int i = 0;
-  char *color;
-  for(i = 0; i < 255; i++) {
-    sprintf(row, "%s %s", row, get_color(randarr[i]));
+  int i, j;
+  if (argc >= 1) {
+    for(i = 0; i < 250; i++) {
+      error_check(read(devrandom, randarr, 250 * sizeof(int)));
+      for(j = 0; j < 250; j++)
+        printf("%d ", randarr[j]);
+      printf("\n");
+    }
+  } else {
+    char *color;
+    for (i = 0; i < 255; i++) {
+      sprintf(row, "%s %s", row, get_color(randarr[i]));
+    }
+    error_check(write(newfile, row, 255 * sizeof(int)));
+    // my_write(newfile, randarr1, 125 * sizeof(int));
   }
-  error_check(write(newfile, row, 255 * sizeof(int)));
-  //my_write(newfile, randarr1, 125 * sizeof(int));
 
   free(row);
   free(randarr);
