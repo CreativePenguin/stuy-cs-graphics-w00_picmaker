@@ -16,5 +16,8 @@ haskell: main.o
 	stack ghc Main.hs
 	./prog.out haskell | ./main > pic.ppm
 
+memtest:
+	valgrind --leak-check=yes ./prog.out
+
 clean:
 	rm *.o *.out *.ppm

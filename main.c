@@ -25,12 +25,12 @@ int error_check(int val) {
 }
 
 char *get_color(int val) {
-  // char *ans, *R, *G, *B;
-  char *ans, R[4], G[4], B[4];
+  char *ans, *R, *G, *B;
+  // char *ans, R[4], G[4], B[4];
   ans = calloc(15, sizeof(char));
-  // R = calloc(4, sizeof(char));
-  // G = calloc(4, sizeof(char));
-  // B = calloc(4, sizeof(char));
+  R = calloc(4, sizeof(char));
+  G = calloc(4, sizeof(char));
+  B = calloc(4, sizeof(char));
   sprintf(R, "%d", abs(val % 255));
   sprintf(G, "%d", abs(val / 1000 % 255));
   sprintf(B, "%d", abs(val / 1000000 % 255));
@@ -84,7 +84,8 @@ int main(int argc, char *argv[]) {
   int devrandom = error_check(open("/dev/urandom", O_RDONLY));
   int newfile = error_check(open("pic.ppm", O_CREAT | O_RDWR, 0644));
   int *randarr = calloc(250, sizeof(int));
-  char *row = calloc(500 * 3 + 50, sizeof(char));
+  char *row = calloc(500 * 4 + 20, sizeof(char));
+  // char *row = malloc(500 * 4 + 20 * sizeof(char));
   char *intro = calloc(20, sizeof(char));
   sprintf(intro, "P3\n500 500\n255\n");
 
@@ -102,10 +103,11 @@ int main(int argc, char *argv[]) {
   } else {
     char *color;
     for (i = 0; i < 255; i++) {
-      sprintf(row, "%s %s", row, get_color(randarr[i]));
+      strcat(row, get_color(randarr[i]));
+      // sprintf(row, "%s %s", row, get_color(randarr[i]));
     }
     strcat(row, "\n");
-    error_check(write(newfile, row, 255 * sizeof(int)));
+    error_check(write(newfile, row, 255 * 4 * sizeof(int)));
     // my_write(newfile, randarr1, 125 * sizeof(int));
   }
 
