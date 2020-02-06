@@ -40,32 +40,29 @@ char *get_color(int val) {
 }
 
 char *y_reflect(char *row) {
-  char copy[strlen(row)];
-  strcpy(copy, row);
-  char delim[2] = " ";
-  char *ptr = strtok(copy, delim);
-  int i;
-  char *ans = malloc(sizeof(row));
+  //char copy[strlen(row)];
+  char *copy;
+  copy = strdup(row);
+  /* char delim[2] = " "; */
+  /* char *ptr = strtok(copy, delim); */
+  int i = 0;
+  char *ans = malloc(strlen(row) * sizeof(char));
   char color[10];
-  while(ptr != NULL) {
-    ptr = strtok(NULL, delim);
+  char *rgb_val;
+  /* while(ptr != NULL) { */
+  /*   ptr = strtok(NULL, delim); */
+  /* } */
+  while((rgb_val = strsep(&copy, " ")) != NULL) {
+  /* for(i = 0; i < 250; i++) { */
+    //sprintf(color, "%c %c %c", copy[i * 3], copy[i * 3 + 1], copy[i * 3 + 2]);
+    if(i % 3 == 0) {
+      sprintf(ans, "%s %s", color, ans);
+      strcpy(color, "");
+    }
+    sprintf(color, "%s %s", color, rgb_val);
+    i++;
+    /* sprintf(color, "%s %s %s", copy[i * 3], copy[i * 3 + 1], copy[i * 3 + 2]); */
   }
-  for(i = 0; i < 250; i++) {
-    sprintf(color, "%c %c %c", copy[i * 3], copy[i * 3 + 1], copy[i * 3 + 2]);
-    sprintf(ans, "%s %s", color, ans);
-  }
-  // char **rows = malloc(250 * sizeof(char *));
-  // char *val = malloc(250 * 3 * sizeof(char));
-  // int i = 0;
-  // while(color) {
-  //   rows[i] = strsep(&color, " ");
-  //   i++;
-  // }
-  // rows[i] = NULL;
-  // for(i = 0; i < 250; i++) {
-  //   sprintf(val, "%s %s", rows[i], val);
-  // }
-  // free(rows);
   return ans;
 }
 
@@ -85,7 +82,7 @@ int main(int argc, char *argv[]) {
   int newfile = error_check(open("pic.ppm", O_CREAT | O_RDWR, 0644));
   int *randarr = calloc(250, sizeof(int));
   char *row = calloc(500 * 4 + 20, sizeof(char));
-  // char *row = malloc(500 * 4 + 20 * sizeof(char));
+  //char *row = calloc(13, sizeof(char));
   char *intro = calloc(20, sizeof(char));
   sprintf(intro, "P3\n500 500\n255\n");
 
@@ -103,15 +100,19 @@ int main(int argc, char *argv[]) {
   } else {
     char *color;
     for (i = 0; i < 255; i++) {
-      strcat(row, get_color(randarr[i]));
-      // sprintf(row, "%s %s", row, get_color(randarr[i]));
+      sprintf(row, "%s %s", row, get_color(randarr[i]));
+      /* sprintf(row + strlen(row), get_color(randarr[i])); */
     }
+    sprintf(row, "%s %s", row, y_reflect(row));
+    printf("%lu %d\n", sizeof(row), strlen(row));
+    printf("%s\n", row);
+    //sprint(row, "%s %s", row, y_reflect(row));
     strcat(row, "\n");
-    error_check(write(newfile, row, 255 * 4 * sizeof(int)));
+    error_check(write(newfile, row, 255 * 4 + 1 * sizeof(int)));
     // my_write(newfile, randarr1, 125 * sizeof(int));
   }
 
-  free(row);
+  //free(row);
   free(randarr);
   close(devrandom);
   close(newfile);

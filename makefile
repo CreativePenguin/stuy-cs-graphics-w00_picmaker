@@ -4,9 +4,11 @@ else
 	CC = gcc
 endif
 
-all: main.o
-	$(CC) -o prog.out main.o
+all: build
 	./prog.out
+
+build: main.o
+	$(CC) main.o -o prog.out
 
 main.o: main.c
 	$(CC) -c main.c
