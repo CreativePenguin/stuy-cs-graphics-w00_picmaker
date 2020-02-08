@@ -21,5 +21,8 @@ haskell: main.o
 memtest:
 	valgrind --leak-check=yes ./prog.out
 
+debug:
+	gcc -g tmp.c
+
 clean:
 	rm *.o *.out *.ppm

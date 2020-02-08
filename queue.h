@@ -1,0 +1,2 @@
+char *peek();
+char *getFirst();
