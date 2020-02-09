@@ -121,6 +121,7 @@ char *x_reflect(char *pic) {
   while((row = strsep(&copy, "\n")) != NULL) {
     sprintf(pic, "%s\n%s", row, copy);
   }
+  free(copy);
   return pic;
 }
 
@@ -129,6 +130,7 @@ int main(int argc, char *argv[]) {
   int newfile = error_check(open("pic.ppm", O_CREAT | O_RDWR, 0644));
   int *randarr = calloc(250, sizeof(int));
   char *row = calloc(500 * 4, sizeof(char));
+  char *pic = calloc(500 * 500 * 4, sizeof(char));
   //char *row = calloc(13, sizeof(char));
   char *intro = calloc(20, sizeof(char));
   sprintf(intro, "P3\n500 500\n255\n");
@@ -150,6 +152,7 @@ int main(int argc, char *argv[]) {
       /* sprintf(row + strlen(row), get_color(randarr[i])); */
     }
     sprintf(row, "%s %s\n", row, y_reflect(row));
+    sprintf(pic, "%s%s", pic, row);
     printf("%lu %d\n", sizeof(row), strlen(row));
     printf("%s\n", row);
     //sprint(row, "%s %s", row, y_reflect(row));

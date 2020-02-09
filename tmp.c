@@ -18,6 +18,20 @@ char *strprefix(char *dest, char *src) {
   return dest;
 }
 
+char *x_reflect(char *pic) {
+  /* char copy[strlen(pic)]; */
+  /* strcpy(copy, pic); */
+  char *copy, *row;
+  copy = strdup(pic);
+  while ((row = strsep(&copy, "\n")) != NULL) {
+    strprefix(row, "\n");
+    strprefix(pic, row);
+    /* printf("%s: %s\n", "---", pic); */
+  }
+  free(copy);
+  return pic;
+}
+
 char *y_reflect(char *row) {
   //char copy[strlen(row)];
   char *copy;
@@ -46,6 +60,7 @@ char *y_reflect(char *row) {
     }
     /* sprintf(color, "%s %s %s", copy[i * 3], copy[i * 3 + 1], copy[i * 3 + 2]); */
   }
+  free(copy); free(rgb_val); free(color);
   return ans;
 }
 
@@ -53,17 +68,9 @@ int main() {
   char *test = malloc(255 * sizeof(char));
   strcpy(test, "123 255 694 33 1 3 99 54 9");
   sprintf(test, "%s%s\n", test, y_reflect(test));
-  /* strcpy(test, y_reflect("123 255 694 33 1 3 99 54 9")); */
-  printf("%s\n", test);
-  /* printf("%s\n", y_reflect("123 255 694 33 1 3")); */
-  /* strcpy(test, "It's kind of a funny story"); */
-  /* char *thirty = malloc(30 * sizeof(char)); */
-  /* strcpy(thirty, "") */
-  /* int i = 0; */
-  /* for(i = 0; i < 30; i++) */
-  /*   test[i + 30] = test[i]; */
-  /* for(i = 0; i < 30 ) */
-  /* printf("%c", test[50]); */
+  /* printf("%s\n", test); */
+  strcpy(test, "123 225 694\n33 1 3\n99 54 9");
+  printf("%s\n", x_reflect(test));
   free(test);
   return 0;
 }
