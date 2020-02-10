@@ -51,7 +51,7 @@ char *strprefix(char *dest, char *src) {
     dest[i + strlen(src)] = tmp[i];
   for (i = 0; i < strlen(src); i++)
     dest[i] = src[i];
-  free(tmp);
+  /* free(tmp); */
   return dest;
 }
 
@@ -83,6 +83,8 @@ char *y_reflect(char *row) {
     }
     /* sprintf(color, "%s %s %s", copy[i * 3], copy[i * 3 + 1], copy[i * 3 + 2]); */
   }
+  free(copy);
+  /* free(color); */
   return ans;
 }
 
@@ -118,10 +120,15 @@ char *x_reflect(char *pic) {
   /* strcpy(copy, pic); */
   char *copy, *row;
   copy = strdup(pic);
-  while((row = strsep(&copy, "\n")) != NULL) {
-    sprintf(pic, "%s\n%s", row, copy);
+  while ((row = strsep(&copy, "\n")) != NULL) {
+    /* sprintf(row, "%s\n", row); */
+    /* sprintf(pic, "%s\n%s", row, pic); */
+    strprefix(pic, "\n");
+    strprefix(pic, row);
+    /* printf("%s: %s\n", "---", pic); */
   }
   free(copy);
+  /* free(row); */
   return pic;
 }
 
@@ -129,8 +136,8 @@ int main(int argc, char *argv[]) {
   int devrandom = error_check(open("/dev/urandom", O_RDONLY));
   int newfile = error_check(open("pic.ppm", O_CREAT | O_RDWR, 0644));
   int *randarr = calloc(250, sizeof(int));
-  char *row = calloc(500 * 4, sizeof(char));
-  char *pic = calloc(500 * 500 * 4, sizeof(char));
+  error_check(char *row = calloc(500 * 4, sizeof(char)));
+  error_check(char *pic = calloc(500 * 500 * 4, sizeof(char)));
   //char *row = calloc(13, sizeof(char));
   char *intro = calloc(20, sizeof(char));
   sprintf(intro, "P3\n500 500\n255\n");
@@ -147,22 +154,27 @@ int main(int argc, char *argv[]) {
       printf("\n");
     }
   } else {
-    for (i = 0; i < 255; i++) {
-      sprintf(row, "%s%s", row, get_color(randarr[i]));
-      /* sprintf(row + strlen(row), get_color(randarr[i])); */
+    for(j = 0; j < 255; j++) {
+      for (i = 0; i < 255; i++) {
+        sprintf(row, "%s%s", row, get_color(randarr[i]));
+        /* sprintf(row + strlen(row), get_color(randarr[i])); */
+      }
+      sprintf(row, "%s %s\n", row, y_reflect(row));
+      strcat(pic, row);
+      sprintf(pic, "%s\n%s", pic, row);
+      /* printf("%lu %d\n", sizeof(row), strlen(row)); */
+      /* printf("%s\n", row); */
+      //sprint(row, "%s %s", row, y_reflect(row));
+      /* free(row); */
     }
-    sprintf(row, "%s %s\n", row, y_reflect(row));
-    sprintf(pic, "%s%s", pic, row);
-    printf("%lu %d\n", sizeof(row), strlen(row));
-    printf("%s\n", row);
-    //sprint(row, "%s %s", row, y_reflect(row));
-    strcat(row, "\n");
-    error_check(write(newfile, row, strlen(row)));
+    sprintf(pic, "%s\n", x_reflect(pic));
+    printf("%s\n", pic);
+    error_check(write(newfile, pic, strlen(pic)));
     // my_write(newfile, randarr1, 125 * sizeof(int));
   }
 
-  //free(row);
-  free(randarr);
+  /* free(*row); */
+  /* free(randarr); */
   close(devrandom);
   close(newfile);
   return 0;

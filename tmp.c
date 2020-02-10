@@ -24,7 +24,9 @@ char *x_reflect(char *pic) {
   char *copy, *row;
   copy = strdup(pic);
   while ((row = strsep(&copy, "\n")) != NULL) {
-    strprefix(row, "\n");
+    /* sprintf(row, "%s\n", row); */
+    /* sprintf(pic, "%s\n%s", row, pic); */
+    strprefix(pic, "\n");
     strprefix(pic, row);
     /* printf("%s: %s\n", "---", pic); */
   }
@@ -66,11 +68,12 @@ char *y_reflect(char *row) {
 
 int main() {
   char *test = malloc(255 * sizeof(char));
-  strcpy(test, "123 255 694 33 1 3 99 54 9");
-  sprintf(test, "%s%s\n", test, y_reflect(test));
+  /* strcpy(test, "123 255 694 33 1 3 99 54 9"); */
+  /* sprintf(test, "%s%s\n", test, y_reflect(test)); */
   /* printf("%s\n", test); */
   strcpy(test, "123 225 694\n33 1 3\n99 54 9");
-  printf("%s\n", x_reflect(test));
+  sprintf(test, x_reflect(test));
+  printf("%s\n", test);
   free(test);
   return 0;
 }
