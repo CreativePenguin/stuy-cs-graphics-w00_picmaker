@@ -6,6 +6,7 @@ endif
 
 all: build
 	./prog.out
+	echo "pic.ppm"
 
 build: main.o
 	$(CC) main.o -o prog.out
