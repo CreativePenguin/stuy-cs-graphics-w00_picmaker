@@ -160,7 +160,7 @@ int main(int argc, char *argv[]) {
       printf("\n");
     }
   } else {
-    for(j = 0; j < 255; j++) {
+    for(j = 0; j < 500; j++) {
       row = calloc(255 * 4, sizeof(char));
       randarr = calloc(250, sizeof(int));
       error_check(read(devrandom, randarr, 250 * sizeof(int)));
