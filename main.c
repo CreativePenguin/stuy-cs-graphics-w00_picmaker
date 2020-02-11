@@ -7,16 +7,14 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define abs_val(X) ((X) < 0 ? -1 * (X) : (X))
+#define trim_nullspace(X) ((X)[0] == '\0' ? X + 1 : X)
+
 void print_arr(int *arr, int size) {
   int i = 0;
   for(; i < size; i++) {
     printf("%d\n", arr[i]);
   }
-}
-
-int abs(int val) {
-  // if(val < 0) return -1 * val else return val;
-  return val < 0 ? -1 * val : val;
 }
 
 int error_check(int val) {
@@ -31,9 +29,9 @@ char *get_color(int val) {
   /* R = calloc(4, sizeof(char)); */
   /* G = calloc(4, sizeof(char)); */
   /* B = calloc(4, sizeof(char)); */
-  sprintf(R, "%d", abs(val % 255));
-  sprintf(G, "%d", abs(val / 1000 % 255));
-  sprintf(B, "%d", abs(val / 1000000 % 255));
+  sprintf(R, "%d", abs_val(val % 255));
+  sprintf(G, "%d", abs_val(val / 1000 % 255));
+  sprintf(B, "%d", abs_val(val / 1000000 % 255));
   sprintf(ans, "%s %s %s ", R, G, B);
   // free(R); free(G); free(B);
   return ans;
@@ -118,33 +116,41 @@ char *y_reflect(char *row) {
 char *x_reflect(char *pic) {
   /* char copy[strlen(pic)]; */
   /* strcpy(copy, pic); */
-  char *copy, *row;
+  char *copy, *row, *copy2, *x_reflect;
+  x_reflect = malloc(strlen(pic) * sizeof(char));
   copy = strdup(pic);
+  copy2 = copy;
   while ((row = strsep(&copy, "\n")) != NULL) {
     /* sprintf(row, "%s\n", row); */
     /* sprintf(pic, "%s\n%s", row, pic); */
-    strprefix(pic, "\n");
-    strprefix(pic, row);
+    strprefix(x_reflect, "\n");
+    strprefix(x_reflect, row);
     /* printf("%s: %s\n", "---", pic); */
   }
-  free(copy);
+  free(copy2);
   /* free(row); */
-  return pic;
+  return x_reflect;
 }
 
 int main(int argc, char *argv[]) {
+  char *row, *pic, row_full;
+  int *randarr;
   int devrandom = error_check(open("/dev/urandom", O_RDONLY));
   int newfile = error_check(open("pic.ppm", O_CREAT | O_RDWR, 0644));
-  int *randarr = calloc(250, sizeof(int));
-  error_check(char *row = calloc(500 * 4, sizeof(char)));
-  error_check(char *pic = calloc(500 * 500 * 4, sizeof(char)));
+  size_t pic_size = 0;
+  /* int *randarr = calloc(250, sizeof(int)); */
+  pic = malloc(3);
+  /* pic = calloc(500 * 255 * 4, sizeof(char)); */
+  /* if(pic == NULL) exit(1); */
+  /* error_check(*row); error_check(*pic); */
+  /* error_check(char *row = calloc(500 * 4, sizeof(char))); */
+  /* error_check(char *pic = calloc(500 * 500 * 4, sizeof(char))); */
   //char *row = calloc(13, sizeof(char));
   char *intro = calloc(20, sizeof(char));
   sprintf(intro, "P3\n500 500\n255\n");
 
   error_check(write(newfile, intro, strlen(intro)));
   free(intro);
-  error_check(read(devrandom, randarr, 250 * sizeof(int)));
   int i, j;
   if (argc > 1) {
     for(i = 0; i < 250; i++) {
@@ -155,21 +161,31 @@ int main(int argc, char *argv[]) {
     }
   } else {
     for(j = 0; j < 255; j++) {
+      row = calloc(255 * 4, sizeof(char));
+      randarr = calloc(250, sizeof(int));
+      error_check(read(devrandom, randarr, 250 * sizeof(int)));
       for (i = 0; i < 255; i++) {
-        sprintf(row, "%s%s", row, get_color(randarr[i]));
+        strcat(row, get_color(randarr[i]));
+        /* sprintf(row, "%s%s", row, get_color(randarr[i])); */
         /* sprintf(row + strlen(row), get_color(randarr[i])); */
       }
-      sprintf(row, "%s %s\n", row, y_reflect(row));
-      strcat(pic, row);
-      sprintf(pic, "%s\n%s", pic, row);
+      /* pic = reallocarray(pic, strlen(row) + pic_size, sizeof(char)); */
+      /* free(randarr); */
+      error_check(write(newfile, strcat(row, " "), strlen(row)));
+      error_check(write(newfile, strcat(y_reflect(row), "\n"), strlen(row)));
+      /* strprefix(pic, y_reflect(row)); */
+      /* strprefix(pic, row); */
+      //strcat(pic, row);
+      /* sprintf(pic, "%s\n%s", pic, row); */
       /* printf("%lu %d\n", sizeof(row), strlen(row)); */
       /* printf("%s\n", row); */
       //sprint(row, "%s %s", row, y_reflect(row));
-      /* free(row); */
+      /* free(randarr); */
+      free(row);
     }
-    sprintf(pic, "%s\n", x_reflect(pic));
-    printf("%s\n", pic);
-    error_check(write(newfile, pic, strlen(pic)));
+    /* error_check(write(newfile, pic, strlen(pic))); */
+    //sprintf(pic, "%s\n", x_reflect(pic));
+    //printf("%s\n", pic);
     // my_write(newfile, randarr1, 125 * sizeof(int));
   }
 
